@@ -1,0 +1,21 @@
+本激活方法适用于 2022,2023全系列版本；
+
+文档更新日期：2023.06.15
+
+## JetBrains 全家桶 激活教程 https://tech.souyunku.com/?page_id=50199
+## JetBrains 全家桶 激活教程 https://tech.souyunku.com/?page_id=50199
+## JetBrains 全家桶 激活教程 https://tech.souyunku.com/?page_id=50199
+## JetBrains 全家桶 激活教程 https://tech.souyunku.com/?page_id=50199
+## JetBrains 全家桶 激活教程 https://tech.souyunku.com/?page_id=50199
+## JetBrains 全家桶 激活教程 https://tech.souyunku.com/?page_id=50199
+
+如果你之前安装过 IDEA, 那么修改过的 hosts 文件要还原回去、引用过的补丁要移除掉, 不然可能会与本文提供的补丁有冲突，出现各种奇奇怪怪的问题。
+
+在以下目录，删除配置文件
+ 
+C:\Users\【系统用户名】\AppData\Roaming\JetBrains\
+
+
+10000多道，面试题，免费下载：https://gitee.com/souyunku/DevBooks
+10000多道，面试题，免费下载：https://gitee.com/souyunku/DevBooks
+10000多道，面试题，免费下载：https://gitee.com/souyunku/DevBooks

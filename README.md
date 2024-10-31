@@ -30,3 +30,6 @@ sudo xattr -r -d com.apple.quarantine /Applications/Clash\ Verge.app
 
 文档
 https://clash-verge-rev.github.io/
+
+
+地址： https://scdy03.scsub.com/apiv2/qinf5xkyvxgsdqz?clash=1&extend=1
