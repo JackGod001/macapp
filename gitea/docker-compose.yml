@@ -1,0 +1,89 @@
+version: "3"
+
+
+networks:
+  # my_network 是自定义的网络名称，可以自定义，但是不能和docker默认的网络名称冲突，否则会报错
+  my_network:
+    # 设置别名,这个只是在docker ps 时方便查看,不可引用
+    name: "${APP_NETWORK}"
+    #    指定自定义IPAM配置。 这是一个具有多个属性的对象，每个属性都是可选的：
+    ipam:
+      #网络的方式是桥接，桥接模式可直接通过名字访问同一个网络下的容器
+      #  driver：自定义IPAM驱动程序，而不是默认值。
+      #      driver: bridge
+      # 具有零个或多个配置块的列表，每个配置块包含以下任意键：
+      config:
+        #表示网段的CIDR格式的子网
+        - subnet: "${APP_IPPR}.0/24"
+          #从中分配容器IPs的IP范围 暂时不知道啥用
+          #ip_range: 172.28.5.0/24
+          #gateway: 主子网的IPv4或IPv6网关后面.1不用动 其他容器不可使用相同的ip
+          gateway: "${APP_IPPR}.1"
+          #aux_addresses:网络驱动程序使用的辅助IPv4或IPv6地址，作为从主机名到IP地址的映射
+#          aux_addresses:
+#            DB_HOST: "${APP_IPPR}.2"
+#            APP_HOST: "${APP_IPPR}.3"
+
+services:
+  server:
+    #latest 测试版不稳定
+    image: gitea/gitea:1.22.1
+    container_name: "${APP_NAME}_app"
+    environment:
+      - USER_UID=1000
+      - USER_GID=1000
+      - GITEA__database__DB_TYPE=mysql
+      - GITEA__database__HOST=gitdb:3306
+      - GITEA__database__NAME=${DB_DATABASE_NAME}
+      - GITEA__database__USER=${DB_USER}
+      - GITEA__database__PASSWD=${DB_USER_PASSWORD}
+        #      禁止注册 注意此处的环境变量如果没设置只能在生成的  gitea/app.ini 修改  或者删除生成的gitea目录
+      - DISABLE_REGISTRATION=true
+    restart: always
+    #    暴露端口，与posts不同的是expose只可以暴露端口而不能映射到主机，只供外部服务连接使用；仅可以指定内部端口为参数
+    #    expose:
+    #      - "3000"
+
+    networks:
+      #这里不能是变量引用,必须是下面network的名称
+      my_network:
+        #my_network:子网中的ip地址,注意不要和其他子网的ip地址冲突
+        ipv4_address: "${APP_IPPR}.3"
+    volumes:
+      - ./gitea:/data
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - "${APP_PORT}:3000"
+      - "${APP_SSH_PORT}:22"
+    #依赖的服务优先启动
+    depends_on:
+      #服务名称,不可变量
+      - gitdb
+  #        - 其他服务
+
+  gitdb:
+    container_name: "${DB_CONTAINER_NAME}"
+    image: mysql:8.0.29
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASSWORD=${DB_USER_PASSWORD}
+      - MYSQL_DATABASE=${DB_DATABASE_NAME}
+    networks:
+      my_network:
+        ipv4_address: "${APP_IPPR}.2"
+    #宿主机端口映射到容器内部,如果不需要宿主机访问容器内部的端口，可以不设置. 注意左边是宿主机端口，右边是容器内部端口
+    #左边端口不可与其他容器端口相同，否则会报错
+    ports: # mysql ports item
+      - "${DB_PORT}:3306" # mysql ports value
+    volumes:
+      - ./mysql:/var/lib/mysql
+    privileged: true
+
+
+#networks:
+#  gitea:
+#    外部网络如果为false 则不加入其他网络
+#    external: false

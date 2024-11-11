@@ -1,0 +1,12 @@
+#############  go ############
+export GOROOT=/usr/local/go
+export GOPATH=/Users/Mac/go
+export GO111MODULE=on
+export GOPROXY=https://goproxy.cn,direct
+export PATH=${PATH}:/usr/local/go/bin
+export PATH=${PATH}:$GOPATH/bin
+
+export GOARCH=arm64
+export GOHOSTARCH=arm64
+export GOBIN=$GOPATH/bin
+#############  go ############
